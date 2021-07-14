@@ -1,0 +1,15 @@
+beautifulsoup4==4.9.3
+bs4==0.0.1
+cachetools==4.2.1
+certifi==2020.11.8
+chardet==3.0.4
+future==0.18.2
+idna==2.10
+lxml==4.6.1
+pefile==2019.4.18
+pyTelegramBotAPI==3.7.6
+python-binary-memcached==0.30.1
+requests==2.24.0
+six==1.15.0
+soupsieve==2.2
+urllib3==1.25.11
