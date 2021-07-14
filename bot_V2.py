@@ -9,12 +9,19 @@ import text # Модуль с текстами сообщений
 import parsing # Модуль с функциями для парсинга
 import portfolio_actions # Модуль с функциями-действиями над портфелем
 from bs4 import BeautifulSoup
+from telebot.types import BotCommand
 
 client = bmemcached.Client(os.environ.get('MEMCACHEDCLOUD_SERVERS').split(','), os.environ.get('MEMCACHEDCLOUD_USERNAME'), os.environ.get('MEMCACHEDCLOUD_PASSWORD'))
 URL = 'https://www.tinkoff.ru/invest/stocks/'
 HEADER = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36','accept': '*/*'}
 
 bot_token = os.environ["bot_token"]
+commands = [
+    BotCommand("start","Начало"),
+    BotCommand("help","Список команд"),
+    BotCommand("tiker","Тикер акции"),
+    BotCommand("portfolio","Портфель")
+    ]
 
 def check_spam(bot,message,last_time,check_msg):
     """
@@ -57,6 +64,7 @@ def teleg_bot(bot_token):
     Работает по средствам polling без остановки и с интервалом обращения 0
     """
     bot = telebot.TeleBot(bot_token,threaded = True, num_threads = 4)
+    bot.set_my_commands(commands)
     print("bot is running")
 
     @bot.callback_query_handler(func = lambda call: True)
@@ -89,26 +97,31 @@ def teleg_bot(bot_token):
     @bot.message_handler(commands = ['start'])
     def start_msg(message):
         if check_spam(bot,message,last_time,check_msg) is True: # Проверка на спам сообщениями
-            bot.send_message(message.chat.id, text.message_start, reply_markup = keyboard.keyboard_down())
+            bot.send_message(message.chat.id, text.message_start)
 
     @bot.message_handler(commands = ['help'])
     def help_msg(message):
         if check_spam(bot,message,last_time,check_msg) is True: # Проверка на спам сообщениями
             bot.send_message(message.chat.id, text.message_help, parse_mode = "HTML")
 
+    @bot.message_handler(commands = ['tiker'])
+    def tiker(message):
+        if check_spam(bot,message,last_time,check_msg) is True: # Проверка на спам сообщениями
+            bot.send_message(message.chat.id,"Введите тикер")
+            bot.register_next_step_handler(message, lambda message: parsing.tickers(bot,message))
+
+    @bot.message_handler(commands = ['portfolio'])
+    def portfolio(message):
+        if check_spam(bot,message,last_time,check_msg) is True: # Проверка на спам сообщениями
+            bot.send_message(message.chat.id, text.message_portfolio, reply_markup = keyboard.menu_stock())
+
     @bot.message_handler(content_types = ['text'])
     def send_text(message):
         if len(last_time) == 100: # При достижении 100 пар (user_id: время последнего сообщения) отчистить словарь
             print(f"Отчищен список занимающий {sys.getsizeof(last_time)+sys.getsizeof(check_msg)} байта")
             last_time.clear(),check_msg.clear()
-        elif check_spam(bot,message,last_time,check_msg) is True: # Проверка на спам сообщениями
-            if message.text.lower() == "тикер":
-                bot.send_message(message.chat.id,"Введите тикер")
-                bot.register_next_step_handler(message, lambda message: parsing.tickers(bot,message))
-            elif message.text.lower() == "портфель":
-                bot.send_message(message.chat.id, text.message_portfolio, reply_markup = keyboard.menu_stock())
-            else:
-                bot.send_message(message.chat.id,"Пока я не знаю такую команду\nчтобы узнать список команд\nвведите /help")
+
+        bot.send_message(message.chat.id,"Воcпользуйтесь меню команд или введите /help")
 
     bot.polling(none_stop = True, interval = 0)
 

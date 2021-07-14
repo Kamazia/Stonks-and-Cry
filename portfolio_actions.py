@@ -2,6 +2,7 @@ import re
 import bot_V2
 import convert
 import parsing
+from bot_V2 import client
 
 def cost(bot,portfolio_data,message):
     """
@@ -62,10 +63,10 @@ def save(bot,message,message_bot):
     bot.delete_message(message.chat.id, message_bot.message_id)
 
     t = message.text.split()
-    bot_V2.client.add(str(message.chat.id)+'_my',t,2592000)
+    client.add(str(message.chat.id)+'_my',t,2592000)
     bot.send_message(message.chat.id,"Акции добавлены")
 
-    portfolio_data = bot_V2.client.get(str(message.chat.id)+'_my')
+    portfolio_data = client.get(str(message.chat.id)+'_my')
     cost(bot,portfolio_data,message)
 
 def edit(bot,message,message_bot):
@@ -83,8 +84,8 @@ def edit(bot,message,message_bot):
     bot.delete_message(message.chat.id, message_bot.message_id)
 
     t = message.text.split()
-    bot_V2.client.set(str(message.chat.id)+'_my',t,2592000)
+    client.set(str(message.chat.id)+'_my',t,2592000)
     bot.send_message(message.chat.id,"Акции изменены")
 
-    portfolio_data = bot_V2.client.get(str(message.chat.id)+'_my')
+    portfolio_data = client.get(str(message.chat.id)+'_my')
     cost(bot,portfolio_data,message)
