@@ -23,10 +23,10 @@ def get_content(html,name = ''):
     Принимается html файл и не обязательный аргумент наименование тикера
     """
     soup = BeautifulSoup(html,'html.parser')
-    items = soup.find_all('div',class_ = 'Row-module__row_3W4eI')
+    items = soup.find_all('div',class_ = 'Row-module__row_23MCP')
     acii1 = []
     for item in items:
-        IO = item.find('span',class_ = 'SecurityHeaderPure__showName_250CD')
+        IO = item.find('span',class_ = 'SecurityHeaderPure__showName_1gpw6')
         #print(IO)
         if IO is None:
             print("Неверный тикер")
@@ -36,9 +36,9 @@ def get_content(html,name = ''):
              })
         else:
             acii1.append({
-                'Name':item.find('span',class_ = 'SecurityHeaderPure__showName_250CD').get_text(),
+                'Name':item.find('span',class_ = 'SecurityHeaderPure__showName_1gpw6').get_text(),
                 #'Cost':item.find('span',class_ = 'Money-module__money_2PlRa').get_text(strip = True),
-                'Cost':item.find('span',class_ = 'SecurityInvitingScreen__priceValue_3nubn').get_text(strip = True),
+                'Cost':item.find('span',class_ = 'SecurityInvitingScreen__priceValue_1U3nL').get_text(strip = True),
                 'Count': 0,
                 'All_cost': 0
              })

@@ -126,6 +126,6 @@ def teleg_bot(bot_token):
     bot.polling(none_stop = True, interval = 0)
 
 if __name__ == '__main__':
-    last_time = {} # Для хранения user_id: время последнего сообщения
+    last_time = {} # Для хранения -> user_id: время последнего сообщения
     check_msg = {} # Счётчик кол-ва сообщений
     teleg_bot(bot_token)
